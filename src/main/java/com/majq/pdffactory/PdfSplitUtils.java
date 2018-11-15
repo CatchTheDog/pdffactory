@@ -1,8 +1,13 @@
 package com.majq.pdffactory;
 
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.PageRange;
+import com.itextpdf.kernel.utils.PdfSplitter;
 
 import java.io.*;
+import java.util.List;
 
 /**
  * @author Mr.X
@@ -14,11 +19,11 @@ public class PdfSplitUtils {
     /**
      * 源文件路径
      */
-    private String srcPath = "";
+    private String srcPath;
     /**
      * 生成文件存放路径
      */
-    private String descPath = "";
+    private String descPath;
 
     public PdfSplitUtils(String srcPath, String descPath) {
         this.srcPath = srcPath;
@@ -29,23 +34,27 @@ public class PdfSplitUtils {
      * 分割PDF
      * @exception IOException 读取源文件异常
      */
-    public void splitPdfByPageNum(int pagesNum) throws IOException {
-        PdfDocument pdfDocIn = new PdfDocument(new PdfReader(srcPath));
-        PdfDocument pdfDocOut = new PdfDocument(new PdfWriter(descPath));
-        PdfPage pdfPage;
-        for(int i = 1;i<=pdfDocIn.getNumberOfPages();i++){
-            pdfPage = pdfDocIn.getPage(i);
-            pdfDocOut.addPage(i,pdfPage);
-            if(i%pagesNum == 0);
-        }
+    public void splitPdfByPageNum() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPath));
+        List<PdfDocument> splitDocuments = new PdfSplitter(pdfDocument){
+           int partNumber = 1;
+            @Override
+            protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
+                try {
+                    return new PdfWriter(descPath + "Java核心技术.卷I.基础知识(原书第10版)_" + String.valueOf(partNumber++) + ".pdf");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException();
+                }
+            }
+        }.splitByPageCount(80);
+        for(PdfDocument doc : splitDocuments)
+            doc.close();
+        pdfDocument.close();
     }
 
-    private void writePdf(PdfDocument pdfDocument) throws FileNotFoundException {
-        if(null != pdfDocument){
-            PdfWriter writer = new PdfWriter(descPath);
 
-        }
+    public static void main(String [] args) throws IOException {
+        PdfSplitUtils utils = new PdfSplitUtils("c:\\Java核心技术 卷I 基础知识（原书第10版）.pdf","C:\\马俊强\\");
+        utils.splitPdfByPageNum();
     }
-
-
 }
