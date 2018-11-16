@@ -3,16 +3,24 @@ package com.majq.pdffactory;
 
 import java.io.*;
 
+/**
+ * .mobi 文件 生成需要使用kindlegen
+ */
 public class PdfToMobiUtils {
 
-    public static void main(String[] args){
-        try(DataInputStream dataInputStream = new DataInputStream(new FileInputStream("C:/Users/Mr.X/Downloads/Java核心技术.卷I.基础知识(原书第10版)_1.mobi"));
-            DataOutputStream dataOutputStream = new DataOutputStream(System.out)
-        ){
-            byte [] buffer = new byte [1024];
-            dataInputStream.read(buffer,0,64);
-            //dataOutputStream.write(buffer,0,64);
-            printBuffer(buffer,0,64);
+    public static void main(String[] args) {
+        analyzeFile();
+    }
+
+    private static void analyzeFile() {
+        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream("C:\\Users\\Mr.X\\Desktop\\Java核心技术（卷2）：高级特性（原书第9版）.mobi"));
+             DataOutputStream dataOutputStream = new DataOutputStream(System.out)
+        ) {
+            byte[] buffer = new byte[1024];
+            int n = 32;
+            dataInputStream.read(buffer, 0, n);
+            //dataOutputStream.write(buffer,0,n);
+            printBuffer(buffer, 0, n);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -20,9 +28,18 @@ public class PdfToMobiUtils {
         }
     }
 
-    private static void printBuffer(byte [] buffer,int start,int end){
-        for(int i = start;i<end;i++){
-         System.out.println(buffer[i]);
+    /**
+     * 磁盘存储内容都是内容补码
+     *
+     * @param buffer
+     * @param start
+     * @param end
+     */
+    private static void printBuffer(byte[] buffer, int start, int end) {
+        for (int i = start; i < end; i++) {
+            System.out.print(buffer[i] & 0xff);
+            System.out.print(" " + Integer.toBinaryString(buffer[i] & 0xff) + " ");
+            System.out.println();
         }
     }
 }

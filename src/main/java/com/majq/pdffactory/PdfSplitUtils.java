@@ -6,14 +6,15 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.PageRange;
 import com.itextpdf.kernel.utils.PdfSplitter;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * @author Mr.X
- * @since 2018/11/15 9:27
  * @version 1.0.0
  * 完成pdf分割
+ * @since 2018/11/15 9:27
  */
 public class PdfSplitUtils {
     /**
@@ -30,14 +31,21 @@ public class PdfSplitUtils {
         this.descPath = descPath;
     }
 
+    public static void main(String[] args) throws IOException {
+        PdfSplitUtils utils = new PdfSplitUtils("c:\\Java核心技术 卷I 基础知识（原书第10版）.pdf", "C:\\马俊强\\");
+        utils.splitPdfByPageNum();
+    }
+
     /**
      * 分割PDF
-     * @exception IOException 读取源文件异常
+     *
+     * @throws IOException 读取源文件异常
      */
     public void splitPdfByPageNum() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPath));
-        List<PdfDocument> splitDocuments = new PdfSplitter(pdfDocument){
-           int partNumber = 1;
+        List<PdfDocument> splitDocuments = new PdfSplitter(pdfDocument) {
+            int partNumber = 1;
+
             @Override
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
@@ -47,14 +55,8 @@ public class PdfSplitUtils {
                 }
             }
         }.splitByPageCount(80);
-        for(PdfDocument doc : splitDocuments)
+        for (PdfDocument doc : splitDocuments)
             doc.close();
         pdfDocument.close();
-    }
-
-
-    public static void main(String [] args) throws IOException {
-        PdfSplitUtils utils = new PdfSplitUtils("c:\\Java核心技术 卷I 基础知识（原书第10版）.pdf","C:\\马俊强\\");
-        utils.splitPdfByPageNum();
     }
 }
