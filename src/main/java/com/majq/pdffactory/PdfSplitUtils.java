@@ -13,7 +13,8 @@ import java.util.List;
 /**
  * @author Mr.X
  * @version 1.0.0
- * 完成pdf分割
+ * pdf分割工具
+ * <em>后续会支持根据页码，根据大小等进行分割，目前暂时固定，每80页分割为一份</em>
  * @since 2018/11/15 9:27
  */
 public class PdfSplitUtils {
