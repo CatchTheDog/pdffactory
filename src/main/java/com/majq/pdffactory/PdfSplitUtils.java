@@ -26,6 +26,8 @@ public class PdfSplitUtils {
      */
     private String descPath;
 
+    private static final String EXTENSION = ".pdf";
+
     public PdfSplitUtils(String srcPath, String descPath) {
         this.srcPath = srcPath;
         this.descPath = descPath;
@@ -49,7 +51,7 @@ public class PdfSplitUtils {
             @Override
             protected PdfWriter getNextPdfWriter(PageRange documentPageRange) {
                 try {
-                    return new PdfWriter(descPath + "Java核心技术.卷I.基础知识(原书第10版)_" + String.valueOf(partNumber++) + ".pdf");
+                    return new PdfWriter(descPath + PathUtils.getFileName(srcPath) + String.valueOf(partNumber++) + EXTENSION);
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 }
