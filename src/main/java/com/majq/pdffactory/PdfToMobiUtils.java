@@ -1,45 +1,69 @@
 package com.majq.pdffactory;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
- * .mobi 文件 生成需要使用kindlegen
+ * @author Mr.x
+ * @since 2018/11/17 13:22
+ * <em>将PDF文件转换为MOBI文件</em>
+ * <strong>因为亚马逊电子书的限制，使用第三方程序生成的电子书不能调整字体大小等</strong>
+ * 所以采用java直接调用bat脚本的方式
  */
 public class PdfToMobiUtils {
+	/**
+	 * 命令行空格
+	 */
+	private final String WHITE_SPACE = " ";
+	/**
+	 * KCC python脚本存放路径
+	 */
+	private final String KCC_EXE_PATH = System.getProperty("user.dir") + File.separator + "kcc";
+	/**
+	 * 调用KCC 脚本存放位置
+	 */
+	private final String BAT_SCRIPT_PATH = System.getProperty("user.dir") + File.separator + "call_kcc.bat";
+	/**
+	 * 源文件存放路径（生成的mobi文件与源文件存放于同一目录下）
+	 */
+	private final String srcPath;
 
-    public static void main(String[] args) {
-        analyzeFile();
-    }
+	public PdfToMobiUtils(String srcPath) {
+		this.srcPath = srcPath;
+		File srcFile = new File(srcPath);
+		if (!srcFile.isFile() || !srcFile.exists()) {
+			throw new IllegalArgumentException("srcPath can't be null!");
+		}
+	}
 
-    private static void analyzeFile() {
-        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream("C:\\Users\\Mr.X\\Desktop\\Java核心技术（卷2）：高级特性（原书第9版）.mobi"));
-             DataOutputStream dataOutputStream = new DataOutputStream(System.out)
-        ) {
-            byte[] buffer = new byte[1024];
-            int n = 32;
-            dataInputStream.read(buffer, 0, n);
-            //dataOutputStream.write(buffer,0,n);
-            printBuffer(buffer, 0, n);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	/**
+	 * 测试
+	 *
+	 * @param args
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static void main(String[] args) throws IOException, InterruptedException {
+		PdfToMobiUtils utils = new PdfToMobiUtils("C:\\Users\\HP\\Desktop\\Java核心技术卷1基础知识原书第10版_7.pdf");
+		utils.generateMobi();
+	}
 
-    /**
-     * 磁盘存储内容都是内容补码
-     *
-     * @param buffer
-     * @param start
-     * @param end
-     */
-    private static void printBuffer(byte[] buffer, int start, int end) {
-        for (int i = start; i < end; i++) {
-            System.out.print(buffer[i] & 0xff);
-            System.out.print(" " + Integer.toBinaryString(buffer[i] & 0xff) + " ");
-            System.out.println();
-        }
-    }
+	/**
+	 * 将PDF文件转换为Mobi文件
+	 * 使用调用bat脚本的方式实现
+	 */
+	public void generateMobi() throws IOException, InterruptedException {
+		String[] args = {KCC_EXE_PATH, this.srcPath};
+		Process process = Runtime.getRuntime().exec(BAT_SCRIPT_PATH + WHITE_SPACE + KCC_EXE_PATH + WHITE_SPACE + this.srcPath);
+		int result = process.waitFor();
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+			String str;
+			while ((str = bufferedReader.readLine()) != null) {
+				System.out.println(str);
+			}
+		}
+	}
 }
