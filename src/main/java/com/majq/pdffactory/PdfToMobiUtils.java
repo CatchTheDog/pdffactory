@@ -45,6 +45,7 @@ public class PdfToMobiUtils {
 	 * @param args
 	 * @throws IOException
 	 * @throws InterruptedException
+	 * 注意：源文件名称中不要有空格，测试显示KCC会无法处理此种文件名
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
 		PdfToMobiUtils utils = new PdfToMobiUtils("C:\\Users\\HP\\Desktop\\Java核心技术卷1基础知识原书第10版_7.pdf");
