@@ -56,9 +56,8 @@ public class PdfToMobiUtils {
 	 * 使用调用bat脚本的方式实现
 	 */
 	public void generateMobi() throws IOException, InterruptedException {
-		String[] args = {KCC_EXE_PATH, this.srcPath};
 		Process process = Runtime.getRuntime().exec(BAT_SCRIPT_PATH + WHITE_SPACE + KCC_EXE_PATH + WHITE_SPACE + this.srcPath);
-		int result = process.waitFor();
+		process.waitFor();
 		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String str;
 			while ((str = bufferedReader.readLine()) != null) {
